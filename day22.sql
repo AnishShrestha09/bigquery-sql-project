@@ -114,3 +114,107 @@ group by
   s.SupplierName
 order by 
    total_amt desc
+-- For every warehouse, calculate:
+
+-- Warehouse name
+-- Number of orders handled
+-- Total inventory stock
+-- Average inventory stock
+
+-- Include warehouses even if they have no orders.
+
+select 
+  w.Warehouse,
+  count(distinct o.OrderID) as number_of_orders,
+  sum(i.Stock) as total_Stock,
+  avg(i.stock) as avg_stock
+from `e1.warehouse` as w
+left join `e1.inventory` as i
+on w.WarehouseID = i.WarehouseID
+left join `e1.orders` as o
+on o.WarehouseID = w.WarehouseID
+group by 
+ w.Warehouse;
+
+
+-- Find the category whose products have the highest average selling price.
+
+-- Display:
+
+-- CategoryID
+-- CategoryName
+-- Average selling price
+
+
+select 
+  c.CategoryID as categoryid,
+  c.CategoryName,
+  avg(p.SellingPrice) as avg_selleing_price
+from `e1.categories` as c
+inner join `e1.products` as p
+on c.CategoryID = p.CategoryID
+group by
+  CategoryID,
+  CategoryName
+limit 1;
+
+
+-- For every supplier, rank their products according to selling price, from highest to lowest.
+
+-- Display:
+
+-- Supplier name
+-- Product name
+-- Selling price
+-- Rank within supplier
+
+
+select 
+  s.SupplierName,
+  p.ProductName,
+  p.SellingPrice,
+  rank() over(partition by p.SupplierID order by p.SellingPrice desc) as ranking
+from `e1.suppliers` as s
+inner join `e1.products` as p
+on s.SupplierID = p.SupplierID;
+
+
+-- show the details of the customers who have joined in the recent 1000 days
+
+select current_date() as today
+
+select * 
+from `e1.customers` 
+where SignupDate >= date_sub(current_date(), INTERVAL 1000 day)
+
+
+
+
+-- How many orders were placed in each year?
+select 
+order_year,
+count(order_day)
+from (
+select 
+OrderID,
+OrderDate,
+extract(year FROM OrderDate ) as order_year,
+extract(month FROM OrderDate ) as order_month,
+extract(day FROM OrderDate ) as order_day
+
+from `e1.orders`
+)
+group by 
+order_year
+
+
+
+-- total orders of a month
+
+select
+extract(month from orderDate) as month,
+count(*) as total_iorders
+
+from `e1.orders`
+group by month
+
