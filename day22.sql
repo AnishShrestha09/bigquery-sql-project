@@ -218,3 +218,25 @@ count(*) as total_iorders
 from `e1.orders`
 group by month
 
+select 
+OrderDate,
+date_trunc(OrderDate, MONTH)
+from `e1.orders`
+
+-- What were the total sales for each month?
+
+select 
+date_trunc(orderdate,month) as month,
+sum(oi.total) as total_sales
+from `e1.orders` as o
+inner join `e1.order_items` as oi
+on o.OrderID = oi.OrderID
+group by month
+
+
+-- How many days has each customer been registered?
+
+select 
+Name,
+date_diff(current_date(), SignupDate, day)
+from `e1.customers`
